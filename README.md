@@ -16,7 +16,7 @@ Hit a url, and get back a response containing a JSON object.
 
 Start with your raceway's unique Club Speed venue name. This can be found in the URLs that your raceways website loads when loading the timing data iframes. Open up your browser inspector and watch when the clubspeed.com pages load. The url is usually something like this:
 
-![Alt text](howto_findvenuename.jpg?raw=true "Like this:")
+![Alt text](howto_findvenuename.png?raw=true "Like this:")
 
 Or, sometimes like this:
 
