@@ -72,7 +72,8 @@ To search the locations database of racers, hit a url like http://kartlaps.info/
 ### Or, Check Out the Locations Leaderboard
 To check out a location's top 100 points earners, I could hit a url like http://kartlaps.info/mb2sylmar/leaderboard.
 
-###### Path: `http://kartlaps.info/mb2sylmar/leaderboard`
+###### Path: 
+`http://kartlaps.info/mb2sylmar/leaderboard`
 
 ###### Response:
 ```json
@@ -103,9 +104,7 @@ To check out a location's top 100 points earners, I could hit a url like http://
             "racer_city": "van nuys",
             "racer_id": 95248,
             "racer_uri": "http:\/\/kartlaps.info\/mb2sylmar\/racer\/95248"
-        },
-
-        ...
+        }
 
     ],
     "crawled_at_unix_time": 1414790536
@@ -115,7 +114,8 @@ To check out a location's top 100 points earners, I could hit a url like http://
 ### Get Individual Racer Information
 Brandon Estes! I found him! Now, to get more information about all of his races at this location, I can hit his uri at http://kartlaps.info/mb2sylmar/racer/1093241 which spits back something like:
 
-###### Path: `http://kartlaps.info/mb2sylmar/racer/1093241`
+###### Path: 
+`http://kartlaps.info/mb2sylmar/racer/1093241`
 
 ###### Response:
 ```json
@@ -166,7 +166,8 @@ Brandon Estes! I found him! Now, to get more information about all of his races 
 ### Get Race Information
 Killer. I now have access to my friends entire race history, and now I can get the details of each of his races by selecting one of the heats and hitting its uri. Let's try http://kartlaps.info/mb2sylmar/heat/140532.
 
-###### Path: `http://kartlaps.info/mb2sylmar/heat/140532`
+###### Path: 
+`http://kartlaps.info/mb2sylmar/heat/140532`
 
 ###### Response:
 ```json
@@ -207,9 +208,7 @@ Killer. I now have access to my friends entire race history, and now I can get t
             "racer_name": "Brandon Estes",
             "racer_id": 1093241,
             "uri": "http:\/\/kartlaps.info\/mb2sylmar\/racer\/1093241"
-        },
-
-        ...
+        }
 
     ],
     "podium": [
@@ -247,8 +246,6 @@ Killer. I now have access to my friends entire race history, and now I can get t
                 "position": 1
             }
 
-            ...
-
         ],
         "48630": [
             {
@@ -266,11 +263,7 @@ Killer. I now have access to my friends entire race history, and now I can get t
                 "seconds": 24.38,
                 "position": 2
             }
-
-            ...
         ]
-
-        ...
     },
     "crawled_at_unix_time": 1414780220,
 }
