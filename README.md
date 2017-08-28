@@ -1,5 +1,5 @@
 # Kart Laps
-[Kart Laps](http://www.kartlaps.info) is a simple API that aims to provide **machine-readable** access to go-kart timing data from raceway venues that use Club Speed timing services. Below you'll find instructions on how to use what's running in production at [kartlaps.info](http://www.kartlaps.info), or how to use the source code to set up your own instance. 
+[Kart Laps](https://www.kartlaps.info) is a simple API that aims to provide **machine-readable** access to go-kart timing data from raceway venues that use Club Speed timing services. Below you'll find instructions on how to use what's running in production at [kartlaps.info](https://www.kartlaps.info), or how to use the source code to set up your own instance. 
 
 >Club Speed is a popular timing system used by many arrive-and-drive karting raceways. After registering at your local raceway, your race timing data is stored and published with Club Speed's web application. But this data is only available for human consumption, often displayed on the raceways website inside of iFrame elements. I could find no way to access that timing data in a machine-readable way, so I made one.
 
@@ -11,26 +11,26 @@ Start by figuring out the unique Club Speed location name of the raceway you wan
 
 ![Finding a location name](https://i.imgur.com/4Gil3im.png?raw=true "Finding a location name")
 
->A location name is required for all requests to the API. But even if you have one, some raceways insist they keep their lap time information entirely private. This seems to be an option in the Club Speed software that each location can control individually. For locations that are set up this way, Kart Laps won't work. If you suspect the location you're working with might be one of those, [contact me](http://www.twitter.com/thomasesmith) before you give up, and let me make sure.
+>A location name is required for all requests to the API. But even if you have one, some raceways insist they keep their lap time information entirely private. This seems to be an option in the Club Speed software that each location can control individually. For locations that are set up this way, Kart Laps won't work. If you suspect the location you're working with might be one of those, [contact me](https://www.twitter.com/thomasesmith) before you give up, and let me make sure.
 
 #### Searching a Location for Racers
-Once you have your location name, a good place to start is by searching that location for racers. Request a URL like http://kartlaps.info/v2/mb2sylmar/search/smith with "mb2sylmar" replaced with your location name, and "smith" replaced with your search string. Club Speed searches the location's racers by their real first name, last name, racer name, or the email address they used to sign up at the raceway...
+Once you have your location name, a good place to start is by searching that location for racers. Request a URL like https://kartlaps.info/v2/mb2sylmar/search/smith with "mb2sylmar" replaced with your location name, and "smith" replaced with your search string. Club Speed searches the location's racers by their real first name, last name, racer name, or the email address they used to sign up at the raceway...
 >Some locations just don't support finding racers by their email address. This seems to be a per-location settting.
 ###### Request:
-`http://kartlaps.info/v2/mb2sylmar/search/smith`
+`https://kartlaps.info/v2/mb2sylmar/search/smith`
 
 ###### Response Example:
 ```json
 {
     "search": {
-        "url": "http:\/\/kartlaps.info\/v2\/mb2sylmar\/search\/smith",
+        "url": "https:\/\/kartlaps.info\/v2\/mb2sylmar\/search\/smith",
         "location": {
             "id": "mb2sylmar"
         },
         "searchString": "smith",
         "results": [
             {
-                "url": "http:\/\/kartlaps.info\/v2\/mb2sylmar\/racer\/619",
+                "url": "https:\/\/kartlaps.info\/v2\/mb2sylmar\/racer\/619",
                 "id": 619,
                 "racerName": "Chipper",
                 "realFirstName": "Chipper",
@@ -38,7 +38,7 @@ Once you have your location name, a good place to start is by searching that loc
                 "city": "newhall"
             },
             {
-                "url": "http:\/\/kartlaps.info\/v2\/mb2sylmar\/racer\/712",
+                "url": "https:\/\/kartlaps.info\/v2\/mb2sylmar\/racer\/712",
                 "id": 712,
                 "racerName": "Jules",
                 "realFirstName": "Julie",
@@ -51,29 +51,29 @@ Once you have your location name, a good place to start is by searching that loc
 >Club Speed's search page can return up to 50 unpaginated results, with no option of pagination.
 
 #### Location Leaderboard
-To check out a location's top 100 points leaders, go to a URL like http://kartlaps.info/v2/mb2sylmar/pointsleaderboard where "mb2sylmar" is replaced with the location name of the location for which you'd like to see the leaderboard...
+To check out a location's top 100 points leaders, go to a URL like https://kartlaps.info/v2/mb2sylmar/pointsleaderboard where "mb2sylmar" is replaced with the location name of the location for which you'd like to see the leaderboard...
 
 ###### Request: 
-`http://kartlaps.info/v2/mb2sylmar/pointsleaderboard`
+`https://kartlaps.info/v2/mb2sylmar/pointsleaderboard`
 
 ###### Response Example:
 ```json
 {
     "pointsleaderboard": {
-        "url": "http:\/\/kartlaps.info\/v2\/mb2sylmar\/pointsleaderboard",
+        "url": "https:\/\/kartlaps.info\/v2\/mb2sylmar\/pointsleaderboard",
         "location": {
             "id": "mb2sylmar"
         },
         "leaders": {
             "1": {
-                "url": "http:\/\/kartlaps.info\/v2\/mb2sylmar\/racer\/9484",
+                "url": "https:\/\/kartlaps.info\/v2\/mb2sylmar\/racer\/9484",
                 "id": 9484,
                 "racerName": "McShredder Varner",
                 "points": 9085,
                 "city": "Shredderville"
             },
             "2": {
-                "url": "http:\/\/kartlaps.info\/v2\/mb2sylmar\/racer\/48630",
+                "url": "https:\/\/kartlaps.info\/v2\/mb2sylmar\/racer\/48630",
                 "id": 48630,
                 "racerName": "K. Clouston",
                 "points": 7734,
@@ -83,16 +83,16 @@ To check out a location's top 100 points leaders, go to a URL like http://kartla
 ```
 
 #### Individual Racer's Basic Info and Race History
-You can get the basic information and race history of an individual racer at a location by hitting a URL like http://kartlaps.info/v2/mb2sylmar/racer/75116 with "mb2sylmar" replaced with the location name you're querying, and the trailing set of numbers of the url replaced with the ID of the racer you want to know more about...
+You can get the basic information and race history of an individual racer at a location by hitting a URL like https://kartlaps.info/v2/mb2sylmar/racer/75116 with "mb2sylmar" replaced with the location name you're querying, and the trailing set of numbers of the url replaced with the ID of the racer you want to know more about...
 
 ###### Request: 
-`http://kartlaps.info/v2/mb2sylmar/racer/75116`
+`https://kartlaps.info/v2/mb2sylmar/racer/75116`
 
 ###### Response Example:
 ```json
 {
     "racer": {
-        "url": "http:\/\/kartlaps.info\/v2\/mb2sylmar\/racer\/75116",
+        "url": "https:\/\/kartlaps.info\/v2\/mb2sylmar\/racer\/75116",
         "id": 75116,
         "location": {
             "id": "mb2sylmar"
@@ -102,7 +102,7 @@ You can get the basic information and race history of an individual racer at a l
         "heats": [
             {
                 "heat": {
-                    "url": "http:\/\/kartlaps.info\/v2\/mb2sylmar\/heat\/237669",
+                    "url": "https:\/\/kartlaps.info\/v2\/mb2sylmar\/heat\/237669",
                     "id": 237669,
                     "location": {
                         "id": "mb2sylmar"
@@ -118,7 +118,7 @@ You can get the basic information and race history of an individual racer at a l
             },
             {
                 "heat": {
-                    "url": "http:\/\/kartlaps.info\/v2\/mb2sylmar\/heat\/233248",
+                    "url": "https:\/\/kartlaps.info\/v2\/mb2sylmar\/heat\/233248",
                     "id": 233248,
                     "location": {
                         "id": "mb2sylmar"
@@ -135,16 +135,16 @@ You can get the basic information and race history of an individual racer at a l
             ...
 ```
 ### Get Heat Data
-You can get a detailed account of each race at a location that includes the participants, the final positions of the participants, and each of their lap's times by hitting a URL like  http://kartlaps.info/v2/mb2sylmar/heat/237669 with "mb2sylmar" replaced with the location name you're querying, and the trailing set of numbers replaced by the heat id you want to know more about...
+You can get a detailed account of each race at a location that includes the participants, the final positions of the participants, and each of their lap's times by hitting a URL like  https://kartlaps.info/v2/mb2sylmar/heat/237669 with "mb2sylmar" replaced with the location name you're querying, and the trailing set of numbers replaced by the heat id you want to know more about...
 
 ###### Request: 
-`http://kartlaps.info/v2/mb2sylmar/heat/237669`
+`https://kartlaps.info/v2/mb2sylmar/heat/237669`
 
 ###### Response Example:
 ```json
 {
     "heat": {
-        "url": "http:\/\/kartlaps.info\/v2\/mb2sylmar\/heat\/237669",
+        "url": "https:\/\/kartlaps.info\/v2\/mb2sylmar\/heat\/237669",
         "id": "237669",
         "location": {
             "id": "mb2sylmar"
@@ -154,12 +154,12 @@ You can get a detailed account of each race at a location that includes the part
         "localDateTime": "1\/5\/2017 6:40 PM",
         "participants": [
             {
-                "url": "http:\/\/kartlaps.info\/v2\/mb2sylmar\/racer\/75116",
+                "url": "https:\/\/kartlaps.info\/v2\/mb2sylmar\/racer\/75116",
                 "id": 75116,
                 "racerName": "ANIMAL"
             },
             {
-                "url": "http:\/\/kartlaps.info\/v2\/mb2sylmar\/racer\/3900",
+                "url": "https:\/\/kartlaps.info\/v2\/mb2sylmar\/racer\/3900",
                 "id": 3900,
                 "racerName": "Isra"
             },
@@ -169,7 +169,7 @@ You can get a detailed account of each race at a location that includes the part
             {
                 "finalPosition": 1,
                 "racer": {
-                    "url": "http:\/\/kartlaps.info\/v2\/mb2sylmar\/racer\/75116",
+                    "url": "https:\/\/kartlaps.info\/v2\/mb2sylmar\/racer\/75116",
                     "id": 75116,
                     "racerName": "ANIMAL"
                 }
@@ -177,7 +177,7 @@ You can get a detailed account of each race at a location that includes the part
             {
                 "finalPosition": 2,
                 "racer": {
-                    "url": "http:\/\/kartlaps.info\/v2\/mb2sylmar\/racer\/3900",
+                    "url": "https:\/\/kartlaps.info\/v2\/mb2sylmar\/racer\/3900",
                     "id": 3900,
                     "racerName": "Isra"
                 }
@@ -185,7 +185,7 @@ You can get a detailed account of each race at a location that includes the part
             {
                 "finalPosition": 3,
                 "racer": {
-                    "url": "http:\/\/kartlaps.info\/v2\/mb2sylmar\/racer\/1279496",
+                    "url": "https:\/\/kartlaps.info\/v2\/mb2sylmar\/racer\/1279496",
                     "id": 1279496,
                     "racerName": "evilgt500"
                 }
@@ -225,16 +225,16 @@ You can get a detailed account of each race at a location that includes the part
             ...
 ```
 ### Top Times
-In addition to a points leaderboard, there is also a laptime leaderboard, that displays best times over the last 1, 7, or 30 day(s). Try a URL like http://kartlaps.info/v2/mb2sylmar/laptimeleaderboard/1 with "mb2sylmar" replace with the location you're querying, and the final number replaced with the amount of days history to show (acceptable values are 1, 7, and 30).
+In addition to a points leaderboard, there is also a laptime leaderboard, that displays best times over the last 1, 7, or 30 day(s). Try a URL like https://kartlaps.info/v2/mb2sylmar/laptimeleaderboard/1 with "mb2sylmar" replace with the location you're querying, and the final number replaced with the amount of days history to show (acceptable values are 1, 7, and 30).
 
 ###### Request: 
-`http://kartlaps.info/v2/mb2sylmar/laptimeleaderboard/1`
+`https://kartlaps.info/v2/mb2sylmar/laptimeleaderboard/1`
 
 ###### Response Example:
 ```json
 {
     "laptimeleaderboard": {
-        "url": "http:\/\/kartlaps.info\/v2\/mb2sylmar\/laptimeleaderboard\/1",
+        "url": "https:\/\/kartlaps.info\/v2\/mb2sylmar\/laptimeleaderboard\/1",
         "location": {
             "id": "mb2sylmar"
         },
@@ -268,7 +268,7 @@ There is currently no limit of requests that you can make, and no key required t
 ***
 
 ## Roll Your Own
-The above is all good if you just want to consume the service and not worry about anything else. But for you tinkerers, the source code that responds to all the `/v2/` requests [in production](http://www.kartlaps.info) is included in the '/src' folder of this git.
+The above is all good if you just want to consume the service and not worry about anything else. But for you tinkerers, the source code that responds to all the `/v2/` requests [in production](https://www.kartlaps.info) is included in the '/src' folder of this git.
 
 ### Setting It Up
 Pretty straight-forward PHP app. But here are some things to note...
@@ -285,4 +285,4 @@ I prefer for this to run with some kind of caching. The version in production us
 ***
 
 ## "x Doesn't Work!"
-Things tends to break sometimes, or not work as expected. Send me a tweet with any questions that come up using this: [@thomasesmith](http://twitter.com/thomasesmith).
+Things tends to break sometimes, or not work as expected. Send me a tweet with any questions that come up using this: [@thomasesmith](https://twitter.com/thomasesmith).
