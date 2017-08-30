@@ -5,9 +5,19 @@ class Location extends CSObject implements iCSObject {
 	
 	private $id;
 
-	function __construct($location_id)
+	function __construct($locationId)
 	{
-		$this->id = $location_id;
+		if (trim($locationId) == "") {
+			throw new KartLapsException("You must include a location name in your request.");
+		} else {
+			$this->id = trim($locationId);
+		}
+	}
+
+
+	function __toString()
+	{
+		return $this->id;
 	}
 
 
@@ -24,10 +34,4 @@ class Location extends CSObject implements iCSObject {
         
 		return $properties;
 	}
-
-	function __toString()
-	{
-		return $this->id;
-	}
-
 }

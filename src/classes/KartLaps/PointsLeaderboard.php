@@ -5,7 +5,6 @@ class PointsLeaderboard extends CSObject implements iCSObject {
 
     private $location; 
     private $leaders = array(); 
-    private $error = "";
     private $url;
 
 	function __construct(Location $location)
@@ -26,9 +25,6 @@ class PointsLeaderboard extends CSObject implements iCSObject {
         if (count($this->leaders) > 0) {
             $properties['leaders'] = $this->leaders; 
         }
-        if (strlen($this->error) > 0) {
-            $properties['error'] = $this->error; 
-        }
 
         // If called with an exclusion list, remove those keys
         foreach ($excludeFields as $exclusion) {
@@ -42,12 +38,13 @@ class PointsLeaderboard extends CSObject implements iCSObject {
     private function fetchHTML()
     {
         $clubSpeedUrl = $this->location->getProperties()['id'] . ".clubspeedtiming.com/sp_center/SpeedLimit.aspx";
+
         try {
             $request = new PageRequest($clubSpeedUrl, "GET");
             $responseHTML = $request->getHTML();
             return $responseHTML;
-        } catch (\Exception $e) {
-            $this->error = "No location was found by that ID. Please double check it and try again. If it is correct, this could be because the location turned off publicly available lap times.";
+        } catch (KartLapsException $e) {
+            throw new KartLapsException("No location was found by the id '" . $this->location . "'. Please double check it and try again. If it is correct, this could be because the location has turned off publicly available lap times.");
         }
     }
     

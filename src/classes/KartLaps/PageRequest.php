@@ -80,7 +80,7 @@ class PageRequest {
         // Use a @ here to squash the PHP warnings caused by Club Speed's malformed html
 
         if ($responseHTML === false) {
-        	throw new \Exception();
+        	throw new KartLapsException("For one reason or another, the page at " . $this->url . " could not be reached.");
         } else {
 	    	/*
 			if ($this->tryCache == true && MEMCACHE_ENABLED == 'true') {

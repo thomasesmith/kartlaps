@@ -9,7 +9,6 @@ class Search extends CSObject implements iCSObject {
     private $searchString = "";
     private $searchByEmail = false;
     private $results = [];
-    private $error = "";
     private $cs_viewstate = "";
     private $cs_eventvalidation = "";
     
@@ -23,15 +22,15 @@ class Search extends CSObject implements iCSObject {
         if (strpos($this->searchString, '@') > 0) {
             $this->searchByEmail = true;
         }
-        // @TODO What if someone is searching for a racer who used an @ in their racer name?
+        /* @TODO Consider what would happen if someone tries to search
+            for a racer who used an @ in their racer name.
+        */
 
         $html = $this->fetchHTML();
         
         $this->url = APP_PROTOCOL . APP_URL . "/" . $this->location->getProperties()['id'] . "/search/" . $this->searchString;
 
-        if ($this->error == "") {
-            $this->parseHTML($html);
-        }
+        $this->parseHTML($html);
     }
 
 
@@ -49,10 +48,6 @@ class Search extends CSObject implements iCSObject {
             foreach ($this->results as $result) {
                 $properties['results'][] = $result->getProperties(["location", "points", "heats"]); 
             }
-        }
-
-        if (strlen($this->error) > 0) {
-            $properties['error'] = $this->error;
         }
 
         // If called with an exclusion list, remove those keys
@@ -82,8 +77,8 @@ class Search extends CSObject implements iCSObject {
                         
             $elements = $xpath->query('//input[@id="__EVENTVALIDATION"]');
             $this->cs_eventvalidation = $elements->item(0)->getAttribute('value');
-        } catch (\Exception $e) {
-            $this->error = "For whatever reason, we couldn't retrieve tokens required to conduct a search at this location. Please double check the location name and try again. If it is correct, this could be because the location turned off publicly available lap times.";
+        } catch (KartLapsException $e) {
+            throw new KartLapsException("For one reason or another, we couldn't retrieve the tokens required to conduct a search at location '" . $this->location . "'. Please double check the location name and try again. If it is correct, this could be because the location has turned off publicly available lap times.");
         }
     }
 
@@ -93,7 +88,7 @@ class Search extends CSObject implements iCSObject {
         $this->fetchToken();
 
         if ($this->cs_eventvalidation == "" || $this->cs_viewstate == "") {
-            $this->error = "For whatever reason, we couldn't retrieve tokens required to conduct a search at this location. Please double check the location name and try again. If it is correct, this could be because the location turned off publicly available lap times.";
+            throw new KartLapsException("For one reason or another, we couldn't retrieve the tokens required to conduct a search at location '" . $this->location . "'. Please double check the location name and try again. If it is correct, this could be because the location has turned off publicly available lap times.");
             return false;
         }
 
@@ -119,12 +114,12 @@ class Search extends CSObject implements iCSObject {
                 // In the event of a HTTP 200 response
                 return $request->getHTML();
             } else {
-                // When the Club Speed search function finds only one result,
-                // it doesn't return a list of results, but instead 302 redirect
-                // directly to the resulting racer's page...
+                /*  When the Club Speed search function finds only one result,
+                    it doesn't return a list of results, but instead 302 redirects
+                    directly to the one results racer page...
+                */
 
-                // We don't know exactly where the "Location:" header is going to be
-                // so we have to find it
+                // No gaurantee where the "Location:" header is going to be so we have to find it
                 foreach ($request->getResponseHeaders() as $headerLine) {
                     if (strtolower(substr($headerLine, 0, 9)) == "location:") {
                         $redirectUrl = $headerLine;
@@ -136,8 +131,8 @@ class Search extends CSObject implements iCSObject {
                 $racerId = (isset($redirectUrl_split[1]) ? $redirectUrl_split[1] : '0');
 
                 if ($racerId > 0) {
-                    // So in this case, return a little emulation of Club Speed's search
-                    // results table row html, using what we know, so the parse method isn't the wiser
+                    // ...So in this case, return a little emulation of Club Speed's search
+                    // results table row html using what we know, so the parse method isn't the wiser
                     $names = explode(" ", ucwords(strtolower($this->searchString)));
 
                     return '<table id="gv"><tr class="TableItemStyle"><td ><a href="RacerHistory.aspx?CustID=' . $racerId . '"></a></td><td></td><td></td><td></td></tr></table>';
@@ -145,8 +140,8 @@ class Search extends CSObject implements iCSObject {
                     return '';
                 }
             }
-        } catch (\Exception $e) {
-            $this->error = "No location was found by that id. Please double check it and try again. If it is correct, this could be because the location turned off publicly available lap times.";
+        } catch (KartLapsException $e) {
+            throw new KartLapsException("No location was found by the id '" . $this->location . "'. Please double check it and try again. If it is correct, this could be because the location has turned off publicly available lap times.");
         }
     }
 
@@ -182,8 +177,7 @@ class Search extends CSObject implements iCSObject {
             }
 
             if (count($this->results) == 1) {
-                // If there was only one result, CS page automatically redirects,
-                // so we have to fetch their additional info on our own
+                // If there was only one result, we have to fetch their additional info on our own
                 $this->results[0]->fetchDetails();
             }
         }

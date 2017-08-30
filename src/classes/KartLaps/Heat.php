@@ -13,7 +13,6 @@ class Heat extends CSObject implements iCSObject {
     private $podium = [];
     private $laps = [];
     private $finalPositions = [];
-    private $error = "";
 
 	function __construct(Location $location, $heat_id, $name = "", $dateTime = "")
 	{
@@ -56,10 +55,6 @@ class Heat extends CSObject implements iCSObject {
             $properties['finalPositions'] = $this->finalPositions;
         }
 
-        if (strlen($this->error) > 0) {
-            $properties['error'] = $this->error;
-        }
-
         // If called with an exclusion list, remove those keys
         foreach ($excludeFields as $exclusion) {
             unset($properties[$exclusion]);
@@ -73,9 +68,7 @@ class Heat extends CSObject implements iCSObject {
     {
         $html = $this->fetchHTML();
 
-        if ($this->error == "") {
-            $this->parseHTML($html);
-        }
+        $this->parseHTML($html);
     }
 
 
@@ -93,8 +86,8 @@ class Heat extends CSObject implements iCSObject {
             $request = new PageRequest($clubSpeedUrl, "GET");
             $responseHTML = $request->getHTML();
             return $responseHTML;
-        } catch (\Exception $e) {
-            $this->error = "No heat was found by that ID and location. Please double check both and try again. If they are correct, this could be because the location turned off publicly available lap times.";
+        } catch (KartLapsException $e) {
+            throw new KartLapsException("No heat was found by the id '" . $this->id . "' at location '" . $this->location . "'. Please double check both and try again. If they are correct, this could be because the location has turned off publicly available lap times.");
         }
     }
 
@@ -110,8 +103,9 @@ class Heat extends CSObject implements iCSObject {
         if ($elements->length > 0) {
             $this->name = $elements->item(0)->textContent;
         } else {
-            // If this element wasn't found, the rest won't be either. Set an error and stop this method.
-            $this->error = "No heat was found by that ID and location. Please double check both and try again. If they are correct, this could be because the location turned off publicly available lap times.";
+            //  If this element wasn't found in the dom, the rest won't be either.
+            //  Throw an exception and stop this method.
+            throw new KartLapsException("No heat was found by the id '" . $this->id . "' at location '" . $this->location . "'. Please double check both and try again. If they are correct, this could be because the location has turned off publicly available lap times.");
             return false;
         }
 
@@ -194,7 +188,7 @@ class Heat extends CSObject implements iCSObject {
 
                     $this->laps[$participant['id']][$lapNumber] = array('seconds' => $lapTime, 'position' => $lapPosition);
 
-                    // @TODO Perhaps there be a Lap object?               
+                    // @TODO Perhaps there should be a Lap object?               
                 }
             }
             

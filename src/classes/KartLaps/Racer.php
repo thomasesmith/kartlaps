@@ -12,7 +12,6 @@ class Racer extends CSObject implements iCSObject {
     private $city = "";
     private $url = "";
     private $heats = array();
-    private $error = "";
 
     function __construct(Location $location, $racerId, $racerName = "", $points = 0, $city = "", $realFirstName = "", $realLastName = "")
     {
@@ -58,10 +57,6 @@ class Racer extends CSObject implements iCSObject {
             $properties['heats'] = $this->heats;
         } 
 
-        if (strlen($this->error) > 0) {
-            $properties['error'] = $this->error;
-        } 
-
         // If called with an exclusion list, remove those keys
         foreach ($excludeFields as $exclusion) {
             unset($properties[$exclusion]);
@@ -85,8 +80,8 @@ class Racer extends CSObject implements iCSObject {
             $request = new PageRequest($clubSpeedUrl, "GET");
             $responseHTML = $request->getHTML();
             return $responseHTML;
-        } catch (\Exception $e) {
-            $this->error = "No racer was found by that ID and location. Please double check both and try again. If they are correct, this could be because the location turned off publicly available lap times.";
+        } catch (KartLapsException $e) {
+            throw new KartLapsException("No racer was found by the ID '" . $this->id . "' at the location '" . $this->location . "'. Please double check both and try again. If they are correct, this could be because the location has turned off publicly available lap times.");
         }
     }
 
@@ -103,8 +98,9 @@ class Racer extends CSObject implements iCSObject {
         if ($elements->length > 0) {
             $this->racerName = $elements->item(0)->textContent;
         } else {
-            // If this element wasn't found, the rest won't be either. Set an error and stop this method.
-            $this->error = "No racer was found by that ID and location. Please double check both and try again. If they are correct, this could be because the location turned off publicly available lap times.";
+            // If this element wasn't found in the dom, the rest won't be either. 
+            // Throw an exception and stop this method.
+            throw new KartLapsException("No racer was found by the ID '" . $this->id . "' at the location '" . $this->location . "'. Please double check both and try again. If they are correct, this could be because the location has turned off publicly available lap times.");
             return false;
         }
 
