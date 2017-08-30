@@ -27,7 +27,7 @@ class Racer extends CSObject implements iCSObject {
     }
 
 
-    public function getProperties($excludeFields = []) {
+    public function getProperties(array $excludeFields = []) {
         $properties = array();
         
         $properties['url'] = $this->url;

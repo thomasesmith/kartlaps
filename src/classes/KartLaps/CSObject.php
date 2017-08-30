@@ -8,5 +8,5 @@ abstract class CSObject {
 }
 
 interface iCSObject {
-	public function getProperties($excludeFields);
+	public function getProperties(array $excludeFields);
 }

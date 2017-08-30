@@ -11,7 +11,7 @@ class Location extends CSObject implements iCSObject {
 	}
 
 
-	public function getProperties($excludeFields = [])
+	public function getProperties(array $excludeFields = [])
 	{
 		$properties = array();
 
