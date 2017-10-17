@@ -134,6 +134,8 @@ You can get the basic information and race history of an individual racer at a l
             },
             ...
 ```
+> I've noticed that from some locations, a racer's heats sometimes aren't listed on their Club Speed racer page. This seems to be a setting each location can control individually, and if the data isn't there, the API of course can't crawl through it. If you find a racer that you know has raced before but you see no heats listed, this is probably why.
+
 ### Get Heat Data
 You can get a detailed account of each race at a location that includes the participants, the final positions of the participants, and each of their lap's times by hitting a URL like  https://kartlaps.info/v2/mb2sylmar/heat/237669 with "mb2sylmar" replaced with the location name you're querying, and the trailing set of numbers replaced by the heat id you want to know more about...
 
@@ -285,4 +287,4 @@ I prefer for this to run with some kind of caching. The version in production us
 ***
 
 ## "x Doesn't Work!"
-Things tends to break sometimes, or not work as expected. Send me a tweet with any questions that come up using this: [@thomasesmith](https://twitter.com/thomasesmith).
+Things tends to break sometimes, or not work as expected. Send me a tweet with any questions that come up using this: [@itsmetomsmith](https://twitter.com/itsmetomsmith).
