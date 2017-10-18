@@ -11,6 +11,7 @@ class Search extends CSObject implements iCSObject {
     private $results = [];
     private $cs_viewstate = "";
     private $cs_eventvalidation = "";
+    private $pageRequestObject;
     
     function __construct(Location $location, $searchString)
     {
@@ -59,13 +60,19 @@ class Search extends CSObject implements iCSObject {
     }
 
 
+    public function getPageRequestObject()
+    {
+        return $this->pageRequestObject;
+    }
+
+
     private function fetchToken()
     {
         $clubSpeedUrl = $this->location->getProperties()['id'] . ".clubspeedtiming.com/sp_center/Login.aspx?";
 
         try {
-            $request = new PageRequest($clubSpeedUrl, 'GET', false);
-            $html = $request->getHTML();
+            $this->pageRequestObject = new PageRequest($clubSpeedUrl, 'GET', false);
+            $html = $this->pageRequestObject->getHTML();
 
             $doc = new \DOMDocument();
             @$doc->loadHTML($html);
@@ -108,11 +115,11 @@ class Search extends CSObject implements iCSObject {
                             '__EVENTVALIDATION' => $this->cs_eventvalidation
                         ];
 
-            $request = new PageRequest($clubSpeedUrl, 'POST', false, $postData);
+            $this->pageRequestObject = new PageRequest($clubSpeedUrl, 'POST', false, $postData);
 
-            if (strpos($request->getResponseHeaders()[0], "HTTP/1.1 302") === false) {
+            if (strpos($this->pageRequestObject->getResponseHeaders()[0], "HTTP/1.1 302") === false) {
                 // In the event of a HTTP 200 response
-                return $request->getHTML();
+                return $this->pageRequestObject->getHTML();
             } else {
                 /*  When the Club Speed search function finds only one result,
                     it doesn't return a list of results, but instead 302 redirects
@@ -120,7 +127,7 @@ class Search extends CSObject implements iCSObject {
                 */
 
                 // No gaurantee where the "Location:" header is going to be so we have to find it
-                foreach ($request->getResponseHeaders() as $headerLine) {
+                foreach ($this->pageRequestObject->getResponseHeaders() as $headerLine) {
                     if (strtolower(substr($headerLine, 0, 9)) == "location:") {
                         $redirectUrl = $headerLine;
                         break; // Stop looping once found.
@@ -140,6 +147,7 @@ class Search extends CSObject implements iCSObject {
                     return '';
                 }
             }
+                        
         } catch (KartLapsException $e) {
             throw new KartLapsException("No location was found by the id '" . $this->location . "'. Please double check it and try again. If it is correct, this could be because the location has turned off publicly available lap times.");
         }

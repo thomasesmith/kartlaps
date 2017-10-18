@@ -1,7 +1,7 @@
 <?php
 namespace KartLaps;
 
-class Location extends CSObject implements iCSObject {
+class Location {
 	
 	private $id;
 

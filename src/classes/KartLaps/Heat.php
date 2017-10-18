@@ -13,11 +13,12 @@ class Heat extends CSObject implements iCSObject {
     private $podium = [];
     private $laps = [];
     private $finalPositions = [];
+    private $pageRequestObject;
 
-	function __construct(Location $location, $heat_id, $name = "", $dateTime = "")
+	function __construct(Location $location, $heatId, $name = "", $dateTime = "")
 	{
 		$this->location = $location;
-		$this->id = intval($heat_id);
+		$this->id = intval($heatId);
 		$this->url = APP_PROTOCOL . APP_URL . "/" . $this->location->getProperties()['id'] . "/heat/" . $this->id;
 		$this->name = $name;
 		$this->localDateTime = $dateTime;
@@ -78,13 +79,19 @@ class Heat extends CSObject implements iCSObject {
     }
 
 
+    public function getPageRequestObject()
+    {
+        return $this->pageRequestObject;
+    }
+    
+
 	private function fetchHTML()
 	{
         $clubSpeedUrl = $this->location->getProperties()['id'] . ".clubspeedtiming.com/sp_center/HeatDetails.aspx?HeatNo=" . $this->id;
         
         try {
-            $request = new PageRequest($clubSpeedUrl, "GET");
-            $responseHTML = $request->getHTML();
+            $this->pageRequestObject = new PageRequest($clubSpeedUrl, "GET");
+            $responseHTML = $this->pageRequestObject->getHTML();
             return $responseHTML;
         } catch (KartLapsException $e) {
             throw new KartLapsException("No heat was found by the id '" . $this->id . "' at location '" . $this->location . "'. Please double check both and try again. If they are correct, this could be because the location has turned off publicly available lap times.");
@@ -119,7 +126,7 @@ class Heat extends CSObject implements iCSObject {
             $this->winBy = $elements->item(0)->textContent;
         }
 
-        // Participants
+        // Find all of the participants
         $elements = $xpath->query("//a[contains(@href,'RacerHistory.aspx?CustID=')]");
 
         if ($elements->length > 0) {
@@ -133,9 +140,7 @@ class Heat extends CSObject implements iCSObject {
 
                 $racer = new Racer($this->location, $racerId, $racerName);
 
-                $excludeFields = ["location"];
-                $this->participants[] = $racer->getProperties($excludeFields); 
-                $this->laps[$racerId] = array();
+                $this->participants[] = $racer->getProperties(["location"]); 
             }
         }
 
@@ -163,14 +168,15 @@ class Heat extends CSObject implements iCSObject {
             $this->podium[] = $podiumItem;
         }
 
-        // Get the lap times of all the participants
+        // Get the laps information of all the participants' laps
         foreach ($this->participants as $participant) {
             
             $elements = $xpath->query('//table[@class="LapTimes"]/thead/tr[th//text()[contains(., "' . $participant['racerName'] . '")]]/../../tbody/tr[contains(@class, "LapTimesRow")]');
 
+            $lapSet = new LapSet($participant['id']); 
+
             if ($elements->length > 0) {
                 foreach ($elements as $element) {
-
                     $lapString = '';
 
                     $nodes = $element->childNodes;
@@ -186,14 +192,11 @@ class Heat extends CSObject implements iCSObject {
                     $lapTime = (isset($lapTimePos_split[0]) ? floatval($lapTimePos_split[0]) : 0.000);
                     $lapPosition = (isset($lapTimePos_split[1]) ? intval($lapTimePos_split[1]) : 0);
 
-                    $this->laps[$participant['id']][$lapNumber] = array('seconds' => $lapTime, 'position' => $lapPosition);
-
-                    // @TODO Perhaps there should be a Lap object?               
+                    $lapSet->addLap($lapNumber, $lapTime, $lapPosition);         
                 }
             }
             
+            $this->laps[] = $lapSet->getProperties();
         }
-        
     }
-
 }

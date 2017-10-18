@@ -7,6 +7,7 @@ class LaptimeLeaderboard extends CSObject implements iCSObject {
     private $leaders = array(); 
     private $url;
     private $days = 1;
+    private $PageRequestObject;
 
 	function __construct(Location $location, $days = 1)
     {
@@ -40,12 +41,18 @@ class LaptimeLeaderboard extends CSObject implements iCSObject {
     }
 
 
+    public function getPageRequestObject()
+    {
+        return $this->pageRequestObject;
+    }
+    
+
     private function fetchHTML()
     {
         $clubSpeedUrl = $this->location->getProperties()['id'] . ".clubspeedtiming.com/sp_center/Toptime.aspx?Days=" . $this->days;
         try {
-            $request = new PageRequest($clubSpeedUrl, "GET");
-            $responseHTML = $request->getHTML();
+            $this->pageRequestObject = new PageRequest($clubSpeedUrl, 'GET');
+            $responseHTML = $this->pageRequestObject->getHTML();
             return $responseHTML;
         } catch (KartLapsException $e) {
             throw new KartLapsException("No location was found by the id '" . $this->location . "'. Please double check it and try again. If it is correct, this could be because the location has turned off publicly available lap times.");

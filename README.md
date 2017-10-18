@@ -193,36 +193,54 @@ You can get a detailed account of each race at a location that includes the part
                 }
             }
         ],
-        "laps": {
-            "75116": {
-                "1": {
-                    "seconds": 27.753,
-                    "position": 2
-                },
-                "2": {
-                    "seconds": 25.418,
-                    "position": 5
-                },
-                "3": {
-                    "seconds": 24.64,
-                    "position": 4
-                },
-                ...
+        "laps": [
+            {
+                "racerId": 75116,
+                "racerLaps": [
+                    {
+                        "lapNumber": 1,
+                        "seconds": 30.196,
+                        "position": 7
+                    },
+                    {
+                        "lapNumber": 2,
+                        "seconds": 23.458,
+                        "position": 2
+                    },
+                    ...
+                ]
             },
-            "3900": {
-                "1": {
-                    "seconds": 27.753,
-                    "position": 2
-                },
-                "2": {
-                    "seconds": 25.418,
-                    "position": 5
-                },
-                "3": {
-                    "seconds": 24.64,
-                    "position": 4
-                },
-                ...
+            {
+                "racerId": 3900,
+                "racerLaps": [
+                    {
+                        "lapNumber": 1,
+                        "seconds": 22.878,
+                        "position": 1
+                    },
+                    {
+                        "lapNumber": 2,
+                        "seconds": 23.259,
+                        "position": 1
+                    },
+                    ...
+                ]
+            },
+            {
+                "racerId": 1279496,
+                "racerLaps": [
+                    {
+                        "lapNumber": 1,
+                        "seconds": 27.753,
+                        "position": 2
+                    },
+                    {
+                        "lapNumber": 2,
+                        "seconds": 25.418,
+                        "position": 5
+                    },
+                    ...
+                ]
             },
             ...
 ```

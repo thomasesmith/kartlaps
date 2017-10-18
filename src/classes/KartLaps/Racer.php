@@ -12,6 +12,7 @@ class Racer extends CSObject implements iCSObject {
     private $city = "";
     private $url = "";
     private $heats = array();
+    private $pageRequestObject;
 
     function __construct(Location $location, $racerId, $racerName = "", $points = 0, $city = "", $realFirstName = "", $realLastName = "")
     {
@@ -26,7 +27,8 @@ class Racer extends CSObject implements iCSObject {
     }
 
 
-    public function getProperties(array $excludeFields = []) {
+    public function getProperties(array $excludeFields = [])
+    {
         $properties = array();
         
         $properties['url'] = $this->url;
@@ -72,13 +74,19 @@ class Racer extends CSObject implements iCSObject {
     }
 
 
+    public function getPageRequestObject()
+    {
+        return $this->pageRequestObject;
+    }
+    
+
     private function fetchHTML()
     {
         $clubSpeedUrl = $this->location->getProperties()['id'] . ".clubspeedtiming.com/sp_center/RacerHistory.aspx?CustID=" . $this->id;
 
         try {
-            $request = new PageRequest($clubSpeedUrl, "GET");
-            $responseHTML = $request->getHTML();
+            $this->pageRequestObject = new PageRequest($clubSpeedUrl, 'GET');
+            $responseHTML = $this->pageRequestObject->getHTML();
             return $responseHTML;
         } catch (KartLapsException $e) {
             throw new KartLapsException("No racer was found by the ID '" . $this->id . "' at the location '" . $this->location . "'. Please double check both and try again. If they are correct, this could be because the location has turned off publicly available lap times.");

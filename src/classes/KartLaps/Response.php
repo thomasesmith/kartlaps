@@ -64,21 +64,31 @@ class Response {
 
     public function responseJson()
     {
-        $assoc = array();
+        $responseArray = array();
         
         if (strlen($this->errorMessage) == 0) {
             if (!is_null($this->responseObject)) {
-        		$objectName = strtolower(str_replace(__NAMESPACE__. '\\', "", get_class($this->responseObject)));
+        		$objectName = strtolower(str_replace(__NAMESPACE__ . '\\', "", get_class($this->responseObject)));
                 
                 if (method_exists($this->responseObject, 'getProperties')) {
-                    $assoc[$objectName] = $this->responseObject->getProperties();
-                    $assoc["about"] = array("data_by" => "Club Speed Inc. (http://www.clubspeed.com)"); 
+                    $responseArray[$objectName] = $this->responseObject->getProperties(['crawledFromUrl']);
+
+                    $about = array();
+
+                    if ($this->responseObject->getPageRequestObject() !== null) {
+                        $about['recoveredFromCache'] = $this->responseObject->getPageRequestObject()->getRecoveredFromCacheStatus();
+                        $about['dataFromUrl'] = 'http://' . $this->responseObject->getPageRequestObject()->getUrl();
+                    }
+
+                    $about['dataBy'] = 'Club Speed Inc. (http://www.clubspeed.com)';
+
+                    $responseArray["about"] = $about; 
                 }
             }
         } else {
-            $assoc['error'] = $this->errorMessage;
+            $responseArray['error'] = $this->errorMessage;
         }
 
-        return json_encode($assoc, JSON_PRETTY_PRINT);
+        return json_encode($responseArray, JSON_PRETTY_PRINT);
     }
 }

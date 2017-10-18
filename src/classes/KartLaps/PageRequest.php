@@ -3,21 +3,28 @@ namespace KartLaps;
 
 class PageRequest {
 
-	private $url = "";
-	private $method = "GET";
+	private $url;
+	private $method;
 	private $responseHTML;
 	private $tryCache = true; 
-	private $postData = [];
+	private $postData;
 	private $responseHeaders;
+	private $recoveredFromCache = false;
 
-	function __construct($url = "", $method = "GET", $tryCache = true, $postData = [])
+	function __construct($url, $method = 'GET', $tryCache = true, $postData = [])
 	{
 		$this->url = $url;
+
 		$this->method = $method;
 		$this->postData = $postData;
 		$this->tryCache = $tryCache;
-
 		$this->responseHTML = $this->makeHttpRequest();
+	}
+
+
+	public function getUrl()
+	{
+        return $this->url;
 	}
 
 
@@ -33,6 +40,12 @@ class PageRequest {
 	}
 
 
+	public function getRecoveredFromCacheStatus()
+	{
+        return $this->recoveredFromCache;
+	}
+
+
 	private function makeHttpRequest()
 	{
 		if ($this->tryCache == true && MEMCACHE_ENABLED == 'true') {
@@ -44,6 +57,7 @@ class PageRequest {
 
     		if ($memcache_html === false) { } else {
 				$html = $memcache_html;
+				$this->recoveredFromCache = true;
 				return $html;
     		}
     		*/
