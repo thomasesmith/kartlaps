@@ -144,6 +144,8 @@ class Heat extends CSObject implements iCSObject {
             }
         }
 
+        // @TODO: Add the participants' points
+
         // Get the podium 
         $podium = array();
         $count = 0;
@@ -170,8 +172,7 @@ class Heat extends CSObject implements iCSObject {
 
         // Get the laps information of all the participants' laps
         foreach ($this->participants as $participant) {
-        
-            $elements = $xpath->query("//table[@class='LapTimes']/thead/tr[th//text()[contains(., '" . str_replace("'", "\'", $participant['racerName']) . "')]]/../../tbody/tr[contains(@class, 'LapTimesRow')]");
+            $elements = $xpath->query("//table[@class='LapTimes']/thead/tr[th//text()[contains(., " . $this->xPathConcatStringCreator($participant['racerName']) . ")]]/../../tbody/tr[contains(@class, 'LapTimesRow')]");
 
             $lapSet = new LapSet($participant['id']); 
 
@@ -198,5 +199,15 @@ class Heat extends CSObject implements iCSObject {
             
             $this->laps[] = $lapSet->getProperties();
         }
+    }
+
+
+    private function xPathConcatStringCreator($input)
+    {
+        if (strpos($input, "'") === false) {
+            return "'$input'";
+        }
+
+        return "concat('" . strtr($input, array("'" => '\', "\'", \'')) . "')";
     }
 }
