@@ -170,8 +170,8 @@ class Heat extends CSObject implements iCSObject {
 
         // Get the laps information of all the participants' laps
         foreach ($this->participants as $participant) {
-            
-            $elements = $xpath->query('//table[@class="LapTimes"]/thead/tr[th//text()[contains(., "' . $participant['racerName'] . '")]]/../../tbody/tr[contains(@class, "LapTimesRow")]');
+        
+            $elements = $xpath->query("//table[@class='LapTimes']/thead/tr[th//text()[contains(., '" . str_replace("'", "\'", $participant['racerName']) . "')]]/../../tbody/tr[contains(@class, 'LapTimesRow')]");
 
             $lapSet = new LapSet($participant['id']); 
 
