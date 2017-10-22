@@ -34,10 +34,7 @@ class Racer extends CSObject implements iCSObject {
         $properties['url'] = $this->url;
         $properties['id'] = intval($this->id);
         $properties['location'] = $this->location->getProperties();
-
-        if (strlen($this->racerName) > 0) {
-            $properties['racerName'] = $this->racerName;
-        } 
+        $properties['racerName'] = $this->racerName;
 
         if (strlen($this->realFirstName) > 0) {
             $properties['realFirstName'] = $this->realFirstName;
