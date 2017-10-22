@@ -35,8 +35,10 @@ class LapSet {
 
 	public function addLap($lapNumber, $seconds, $position)
 	{
-		$lap = array("lapNumber" => $lapNumber, "seconds" => $seconds, "position" => $position);
-		$this->racerLaps[] = $lap;
+		if ($seconds != 0) {
+			$lap = array("lapNumber" => $lapNumber, "seconds" => $seconds, "position" => $position);
+			$this->racerLaps[] = $lap;
+		}
 	}
 
 }
