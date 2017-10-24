@@ -3,26 +3,27 @@ namespace KartLaps;
 
 class Heat extends CSObject implements iCSObject {
 
-	private $location;
-	private $id = 0;
-	private $name = "";
-	private $url = "";
+    private $location;
+    private $id = 0;
+    private $name = "";
+    private $url = "";
     private $localDateTime = "";
     private $winBy = "";
+    private $participantIds = [];
     private $participants = [];
     private $podium = [];
     private $laps = [];
     private $finalPositions = [];
     private $pageRequestObject;
 
-	function __construct(Location $location, $heatId, $name = "", $dateTime = "")
-	{
-		$this->location = $location;
-		$this->id = intval($heatId);
-		$this->url = APP_PROTOCOL . APP_URL . "/" . $this->location->getProperties()['id'] . "/heat/" . $this->id;
-		$this->name = $name;
-		$this->localDateTime = $dateTime;
-	}
+    function __construct(Location $location, $heatId, $name = "", $dateTime = "")
+    {
+        $this->location = $location;
+        $this->id = intval($heatId);
+        $this->url = APP_PROTOCOL . APP_URL . "/" . $this->location->getProperties()['id'] . "/heat/" . $this->id;
+        $this->name = $name;
+        $this->localDateTime = $dateTime;
+    }
 
 
     public function getProperties(array $excludeFields = [])
@@ -85,8 +86,8 @@ class Heat extends CSObject implements iCSObject {
     }
     
 
-	private function fetchHTML()
-	{
+    private function fetchHTML()
+    {
         $clubSpeedUrl = $this->location->getProperties()['id'] . ".clubspeedtiming.com/sp_center/HeatDetails.aspx?HeatNo=" . $this->id;
         
         try {
@@ -139,8 +140,10 @@ class Heat extends CSObject implements iCSObject {
                 $racerName = $element->textContent;
 
                 $racer = new Racer($this->location, $racerId, $racerName);
+                
+                $this->participantIds[] = intval($racerId);
 
-                $this->participants[] = $racer->getProperties(["location"]); 
+                $this->participants[] = $racer->getProperties(["location"]);
             }
         }
 
@@ -171,32 +174,29 @@ class Heat extends CSObject implements iCSObject {
         }
 
         // Get the laps information of all the participants' laps
-        foreach ($this->participants as $participant) {
-            $elements = $xpath->query("//table[@class='LapTimes']/thead/tr[th//text()[contains(., " . $this->xPathConcatStringCreator($participant['racerName']) . ")]]/../../tbody/tr[contains(@class, 'LapTimesRow')]");
+        // Lap sets are put on the page in order of racer id, so make sure the ids array is in order
+        sort($this->participantIds);
 
-            $lapSet = new LapSet($participant['id']); 
+        $elements = $xpath->query("//table[@class='LapTimesContainer']/tbody/tr/td/table[@class='LapTimes']");
 
-            if ($elements->length > 0) {
-                foreach ($elements as $element) {
-                    $lapString = '';
+        for ($i = 0; $i < $elements->length; $i++) {
+            $lapSet = new LapSet($this->participantIds[$i]); 
 
-                    $nodes = $element->childNodes;
-                        
-                    foreach ($nodes as $node) {
-                        $lapString .= $node->nodeValue . "|";
-                    }
-            
-                    $lapString_split = explode("|", $lapString);
-                    $lapNumber = (isset($lapString_split[0]) ? intval($lapString_split[0]) : 0);
-                    $lapTimePos = str_replace(array('[',']'), "", $lapString_split[1]);
-                    $lapTimePos_split = explode(" ", $lapTimePos);
-                    $lapTime = (isset($lapTimePos_split[0]) ? floatval($lapTimePos_split[0]) : 0.000);
-                    $lapPosition = (isset($lapTimePos_split[1]) ? intval($lapTimePos_split[1]) : 0);
+            $lapsCells = $elements->item($i)->childNodes->item(1)->childNodes; 
+               
+            foreach ($lapsCells as $lapsCell) {
+                if (strpos($lapsCell->getAttribute('class'), "LapTimesRow") === false) { } else {
+                    $lapNumber = intval($lapsCell->childNodes->item(0)->nodeValue);
+                    
+                    $lapExplode = explode(" ", $lapsCell->childNodes->item(1)->nodeValue);
+
+                    $lapTime = (isset($lapExplode[0]) ? floatval($lapExplode[0]) : 0);
+                    $lapPosition = (isset($lapExplode[1]) ? intval(str_replace(array('[',']'), "", $lapExplode[1])) : 0);
 
                     $lapSet->addLap($lapNumber, $lapTime, $lapPosition);         
                 }
             }
-            
+
             $this->laps[] = $lapSet->getProperties();
         }
     }
