@@ -55,7 +55,7 @@ class PageRequest {
 			$memcache->connect(MEMCACHE_HOST, MEMCACHE_PORT);
 			$memcache_html = $memcache->get($this->url);
 
-    		if ($memcache_html === false) { } else {
+    		if ($memcache_html !== false) {
 				$html = $memcache_html;
 				$this->recoveredFromCache = true;
 				return $html;
@@ -99,7 +99,7 @@ class PageRequest {
 	    	/*
 			if ($this->tryCache == true && MEMCACHE_ENABLED == 'true') {
 				// Save the response to the memcache with an expiration
-				$memcache->set($this->url, $responseHTML, MEMCACHE_TTL);
+				$memcache->set($this->url, $responseHTML, 0, intval(MEMCACHE_TTL));
 			}
 			*/
 
