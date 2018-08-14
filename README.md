@@ -305,4 +305,4 @@ I prefer for this to run with some kind of caching. The version in production us
 ***
 
 ## "x Doesn't Work!"
-Things tends to break sometimes, or not work as expected. Send me a tweet with any questions that come up using this: [@itsmetomsmith](https://twitter.com/itsmetomsmith).
+Things tends to break sometimes, or not work as expected. Send me a tweet with any questions that come up using this: [@varwwwhtml](https://twitter.com/varwwwhtml).
